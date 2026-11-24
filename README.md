@@ -1,5 +1,7 @@
 # Wealth Wise: AI-powered personal finance assistant
 
+**Live demo:** https://wealth-wise-agent-vzjfenxbpqtwmkyajtdm7y.streamlit.app/
+
 A personal finance app for Indian investors that does three things:
 
 1. **Personalised recommendations.** Custom scoring algorithms turn your profile into a monthly SIP plan with ranked mutual funds, scored NIFTY 50 stocks and the best fixed deposit for you. AI agents explain the plan and answer questions about it.
