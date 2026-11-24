@@ -1,12 +1,13 @@
-"""SQLite database: the user's profile, transactions and budgets.
+"""SQLite database: each visitor's profile, transactions and budgets.
 
-Wealth Wise is a single-user app that runs on your own machine, so there is no login:
-the profile is a single row with id 1.
+There is no login. The browser makes a random visitor id (kept in localStorage) and sends it
+as the `X-Client-Id` header; every row belongs to one `client_id`, so visitors of the public
+demo never see each other's data.
 """
 from collections.abc import Iterator
 from datetime import date, datetime, timezone
 
-from sqlalchemy import JSON, Date, DateTime, Float, Integer, String, create_engine
+from sqlalchemy import JSON, Date, DateTime, Float, Integer, String, create_engine, inspect
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, sessionmaker
 
 from app.config import DATA_DIR, settings
@@ -19,7 +20,7 @@ class Base(DeclarativeBase):
 class Profile(Base):
     __tablename__ = "profile"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, default=1)
+    client_id: Mapped[str] = mapped_column(String(64), primary_key=True)
     name: Mapped[str] = mapped_column(String(80), default="")
     age: Mapped[int] = mapped_column(Integer)
     monthly_income: Mapped[float] = mapped_column(Float)
@@ -37,6 +38,7 @@ class Transaction(Base):
     __tablename__ = "transactions"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    client_id: Mapped[str] = mapped_column(String(64), index=True)
     date: Mapped[date] = mapped_column(Date, index=True)
     amount: Mapped[float] = mapped_column(Float)          # always positive; `kind` says which way it went
     kind: Mapped[str] = mapped_column(String(10))         # "expense" | "income"
@@ -47,6 +49,7 @@ class Transaction(Base):
 class Budget(Base):
     __tablename__ = "budgets"
 
+    client_id: Mapped[str] = mapped_column(String(64), primary_key=True)
     category: Mapped[str] = mapped_column(String(30), primary_key=True)
     monthly_limit: Mapped[float] = mapped_column(Float)
 
@@ -57,7 +60,15 @@ SessionLocal = sessionmaker(engine, expire_on_commit=False)
 
 
 def init_db() -> None:
+    _drop_pre_visitor_tables()
     Base.metadata.create_all(engine)
+
+
+def _drop_pre_visitor_tables() -> None:
+    """Databases from before per-visitor data have no `client_id` column; start those fresh."""
+    names = inspect(engine).get_table_names()
+    if "profile" in names and "client_id" not in {c["name"] for c in inspect(engine).get_columns("profile")}:
+        Base.metadata.drop_all(engine)
 
 
 def get_db() -> Iterator[Session]:

@@ -41,8 +41,8 @@ How to answer:
 class Agent:
     """One conversation turn. Tools are methods so they can reach the database and collect sources."""
 
-    def __init__(self, db: Session):
-        self.db = db
+    def __init__(self, db: Session, client_id: str):
+        self.db, self.client_id = db, client_id
         self.sources: list[dict] = []
         self.tools_used: list[dict] = []
 
@@ -74,7 +74,7 @@ class Agent:
         """Wealth Wise's factor score (value, quality, momentum, low volatility; 0-100) for a NIFTY 50 stock,
         judged for this user's risk profile, with its key metrics."""
         snap = load_snapshot()
-        profile = services.get_profile(self.db)
+        profile = services.get_profile(self.db, self.client_id)
         scored = score_stocks(snap["stocks"], profile.risk_category if profile else "moderate")
         symbol = symbol.strip().upper().removesuffix(".NS")
         for rank, s in enumerate(scored, 1):
@@ -90,7 +90,7 @@ class Agent:
         annual_return = 0.07 if years < 3 else 0.09 if years < 7 else 0.12  # debt-like / balanced / equity-like
         per_rupee = sip_future_value(1, years, annual_return)
         monthly = future_target / per_rupee
-        profile = services.get_profile(self.db)
+        profile = services.get_profile(self.db, self.client_id)
         surplus = max(0.0, profile.monthly_income - profile.monthly_expenses) if profile else None
         return {"target_today": round(target_amount_today), "target_in_future_rupees": round(future_target),
                 "inflation_assumed": INFLATION, "years": years, "return_assumed": annual_return,
@@ -100,7 +100,7 @@ class Agent:
     def get_my_plan(self) -> dict:
         """The user's personalised monthly investment plan: risk profile, emergency fund, asset allocation,
         SIP amounts per sleeve with recommended funds, best FD, and a projection."""
-        plan = services.current_plan(self.db)
+        plan = services.current_plan(self.db, self.client_id)
         if not plan:
             return {"error": "The user hasn't filled in their profile yet. Ask them to complete it on the Profile page."}
         return {
@@ -115,7 +115,7 @@ class Agent:
     def get_my_spending(self, month: str) -> dict:
         """The user's spending summary and savings insights for a month. `month` is YYYY-MM,
         or "latest" for the most recent month with transactions."""
-        data = services.spending(self.db, None if month in ("", "latest") else month)
+        data = services.spending(self.db, self.client_id, None if month in ("", "latest") else month)
         if not data:
             return {"error": "No transactions yet. The user can add some on the Expenses page."}
         s = data["summary"]
@@ -162,9 +162,9 @@ class Agent:
         return "I needed too many steps for that one. Could you ask a narrower question?"
 
 
-def chat(db: Session, messages: list[dict]) -> dict:
+def chat(db: Session, client_id: str, messages: list[dict]) -> dict:
     """Answer the last user message. Without an API key, falls back to plain lesson search."""
-    agent = Agent(db)
+    agent = Agent(db, client_id)
     try:
         reply = agent.run(messages)
         mode = "ai"

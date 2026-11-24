@@ -106,6 +106,19 @@ cd backend
 
 FD rates live in `backend/app/market/fd_rates.json` and must be updated by hand from bank websites (the app labels them as indicative).
 
+### Deploy (free, on Render)
+
+The repo deploys as **one web service**: the `Dockerfile` builds the React app and the FastAPI backend serves it.
+
+1. Sign in at https://render.com with GitHub.
+2. **New → Blueprint**, then pick this repository (Render reads `render.yaml`).
+3. Paste your Gemini key when Render asks for `GEMINI_API_KEY`, then click **Apply**.
+4. The first build takes about 5 minutes. Your site is at `https://wealth-wise-<something>.onrender.com`.
+
+Notes on the free plan: the service sleeps after 15 minutes without visitors, so the first visit afterwards takes about a minute; and its disk is temporary, so visitors' data resets when the service restarts. That's fine for a demo.
+
+**Public-demo safety:** there is no login, so each browser gets a random visitor id (`X-Client-Id` header) and only ever sees its own profile, transactions and budgets. AI endpoints are rate-limited per IP (`AI_REQUESTS_PER_HOUR`, default 30) to protect the Gemini quota, and market data can be re-downloaded at most once an hour.
+
 ### Tests
 
 ```powershell
@@ -113,7 +126,7 @@ cd backend
 .\.venv\Scripts\pytest -q
 ```
 
-33 tests run offline: the engine, expense analytics, CSV import, RAG search, the API, and the agent loop with a scripted fake Gemini.
+38 tests run offline: the engine, expense analytics, CSV import, RAG search, the API (including visitor isolation and rate limits), and the agent loop with a scripted fake Gemini.
 
 ---
 
@@ -122,10 +135,11 @@ cd backend
 ```
 backend/
   app/
-    main.py            FastAPI app + /api/health
-    config.py, db.py   settings (.env) and SQLite models: Profile, Transaction, Budget
+    main.py            FastAPI app, /api/health, serves the built frontend in production
+    config.py, db.py   settings (.env) and SQLite models: Profile, Transaction, Budget (all per visitor)
+    ratelimit.py       in-memory rate limiter for the AI endpoints
     services.py        shared reads used by routes and agent tools
-    api/               profile.py · plan.py (plan, explain, market) · expenses.py · learn.py (lessons, chat)
+    api/               deps.py (visitor id, rate limit) · profile.py · plan.py (plan, explain, market) · expenses.py · learn.py (lessons, chat)
     engine/            risk · allocation · stocks · funds · fds · ranking · metrics · plan
     market/            universe.py (what's tracked) · data.py (snapshot + live quotes) · fd_rates.json
     expenses/          categories · analytics · importer
@@ -159,6 +173,6 @@ frontend/src/
 
 ## Limitations
 
-- Single user, local only (no login): built to run on your own machine.
+- No accounts: data is tied to a random id in your browser, so clearing site data (or another browser) starts fresh.
 - Stock fundamentals come from Yahoo Finance and can be missing or delayed. FD rates are a hand-maintained table.
 - Expected returns (equity 12%, debt 7%) are long-run assumptions, not forecasts.

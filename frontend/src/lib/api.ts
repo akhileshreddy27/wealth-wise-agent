@@ -8,11 +8,24 @@ export class ApiError extends Error {
   }
 }
 
+/** A random id for this browser, so each visitor of the public demo has their own private data (no login). */
+function clientId(): string {
+  const KEY = 'wealthwise.clientId'
+  let id = localStorage.getItem(KEY)
+  if (!id) {
+    id = crypto.randomUUID?.() ?? Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) => b.toString(16).padStart(2, '0')).join('')
+    localStorage.setItem(KEY, id)
+  }
+  return id
+}
+
 async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
   const isForm = body instanceof FormData
+  const headers: Record<string, string> = { 'X-Client-Id': clientId() }
+  if (body && !isForm) headers['Content-Type'] = 'application/json'
   const res = await fetch(`/api${path}`, {
     method,
-    headers: body && !isForm ? { 'Content-Type': 'application/json' } : undefined,
+    headers,
     body: body === undefined ? undefined : isForm ? body : JSON.stringify(body),
   })
   if (!res.ok) {

@@ -77,7 +77,7 @@ def _db_with_profile():
     Base.metadata.create_all(engine)
     from app.db import Profile
     db = SessionLocal()
-    db.add(Profile(id=1, **PROFILE, risk_score=6, risk_category="moderate"))
+    db.add(Profile(client_id="local", **PROFILE, risk_score=6, risk_category="moderate"))
     db.commit()
     return db
 
@@ -88,7 +88,7 @@ def test_agent_runs_tools_and_collects_citations(monkeypatch, snapshot):
                       answer("A SIP invests monthly [1]. Your plan has a few."))
     monkeypatch.setattr(assistant, "generate", fake)
     with _db_with_profile() as db:
-        out = assistant.chat(db, [{"role": "user", "content": "Explain SIPs and my plan"}])
+        out = assistant.chat(db, "local", [{"role": "user", "content": "Explain SIPs and my plan"}])
     assert out["mode"] == "ai" and out["reply"].startswith("A SIP")
     assert [t["name"] for t in out["tools_used"]] == ["search_knowledge", "get_my_plan"]
     assert out["sources"][0]["n"] == 1 and out["sources"][0]["module_id"]
@@ -105,14 +105,14 @@ def test_agent_reports_tool_errors_to_the_model(monkeypatch):
     fake = FakeGemini(tool_call("get_stock_quote", symbol="TCS"), answer("Couldn't fetch the price right now."))
     monkeypatch.setattr(assistant, "generate", fake)
     with _db_with_profile() as db:
-        out = assistant.chat(db, [{"role": "user", "content": "TCS price?"}])
+        out = assistant.chat(db, "local", [{"role": "user", "content": "TCS price?"}])
     sent = fake.calls[-1]["contents"][-1].parts[0].function_response.response["result"]
     assert "offline" in sent["error"] and out["reply"].startswith("Couldn't")
 
 
 def test_chat_without_key_falls_back_to_search():
     with _db_with_profile() as db:
-        out = assistant.chat(db, [{"role": "user", "content": "how big should my emergency fund be"}])
+        out = assistant.chat(db, "local", [{"role": "user", "content": "how big should my emergency fund be"}])
     assert out["mode"] == "search" and out["sources"]
     assert "GEMINI_API_KEY" in out["reply"]
 
@@ -131,7 +131,7 @@ def test_categoriser_only_accepts_known_categories(monkeypatch):
 
 def test_plan_goal_tool():
     with _db_with_profile() as db:
-        out = assistant.Agent(db).plan_goal(target_amount_today=2_000_000, years=8)
+        out = assistant.Agent(db, "local").plan_goal(target_amount_today=2_000_000, years=8)
     assert out["target_in_future_rupees"] > 2_000_000 and out["return_assumed"] == 0.12
     assert 10_000 < out["monthly_sip_needed"] < 30_000 and out["user_monthly_surplus"] == 35000
 

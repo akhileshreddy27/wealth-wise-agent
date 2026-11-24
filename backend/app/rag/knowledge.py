@@ -11,6 +11,7 @@ import json
 import logging
 import math
 import re
+import threading
 from collections import Counter
 from dataclasses import asdict, dataclass
 from functools import lru_cache
@@ -157,8 +158,17 @@ def _normalise(v: np.ndarray) -> np.ndarray:
     return v / np.where(norms == 0, 1, norms)
 
 
-@lru_cache
+_kb_lock = threading.Lock()
+
+
 def get_knowledge_base() -> KnowledgeBase:
+    """Built once (embedding the lessons on first use); the lock stops two requests building it twice."""
+    with _kb_lock:
+        return _build_knowledge_base()
+
+
+@lru_cache
+def _build_knowledge_base() -> KnowledgeBase:
     from app.ai.gemini import embed  # imported here so the knowledge base works without the AI layer
 
     return KnowledgeBase(chunk_lessons(load_modules()), embed if settings.ai_enabled else None)

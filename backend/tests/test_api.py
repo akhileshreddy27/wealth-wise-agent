@@ -52,3 +52,41 @@ def test_learn_and_chat(client):
     reply = client.post("/api/chat", json={"messages": [{"role": "user", "content": "What is an index fund?"}]}).json()
     assert reply["mode"] == "search" and reply["sources"]
     assert client.post("/api/chat", json={"messages": [{"role": "assistant", "content": "hi"}]}).status_code == 422
+
+
+def test_visitors_only_see_their_own_data(client):
+    alice, bob = {"X-Client-Id": "alice-0001"}, {"X-Client-Id": "bob-00002"}
+    client.put("/api/profile", json=PROFILE | {"name": "Alice"}, headers=alice)
+    txn = client.post("/api/transactions", json={"date": "2026-06-03", "amount": 450, "note": "Zomato"}, headers=alice).json()
+    client.put("/api/budgets", json={"dining": 1000}, headers=alice)
+
+    assert client.get("/api/profile", headers=bob).json() is None
+    assert client.get("/api/plan", headers=bob).status_code == 404
+    assert client.get("/api/transactions", headers=bob).json() == []
+    assert client.get("/api/budgets", headers=bob).json() == {}
+    assert client.delete(f"/api/transactions/{txn['id']}", headers=bob).status_code == 404   # can't touch Alice's
+    client.delete("/api/transactions", headers=bob)                                            # "delete all" is Bob's only
+    assert len(client.get("/api/transactions", headers=alice).json()) == 1
+    assert client.get("/api/profile", headers=alice).json()["name"] == "Alice"
+    assert client.get("/api/health", headers=alice).json()["has_profile"] is True
+
+
+def test_bad_client_id_rejected(client):
+    assert client.get("/api/profile", headers={"X-Client-Id": "../../etc"}).status_code == 400
+
+
+def test_ai_endpoints_are_rate_limited(client, monkeypatch):
+    from app.api import deps
+    from app.ratelimit import RateLimiter
+    monkeypatch.setattr(deps, "_ai_limiter", RateLimiter(2, window_seconds=3600))
+    body = {"messages": [{"role": "user", "content": "What is an SIP?"}]}
+    codes = [client.post("/api/chat", json=body).status_code for _ in range(3)]
+    assert codes == [200, 200, 429]
+
+
+def test_market_refresh_skipped_when_fresh(client, monkeypatch):
+    from datetime import datetime, timezone
+    monkeypatch.setattr("app.api.plan.load_snapshot", lambda: {"updated_at": datetime.now(timezone.utc).isoformat(),
+                                                              "stocks": [], "funds": [], "missing": {}})
+    monkeypatch.setattr("app.api.plan.refresh_snapshot", lambda: (_ for _ in ()).throw(AssertionError("should not refresh")))
+    assert "skipped" in client.post("/api/market/refresh").json()

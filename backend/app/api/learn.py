@@ -3,6 +3,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from app.ai.assistant import chat
+from app.api.deps import ai_rate_limit, client_id
 from app.db import get_db
 from app.rag.knowledge import load_modules
 
@@ -32,11 +33,11 @@ class ChatIn(BaseModel):
     messages: list[Message] = Field(min_length=1, max_length=30)
 
 
-@router.post("/chat")
-def chat_endpoint(body: ChatIn, db: Session = Depends(get_db)):
+@router.post("/chat", dependencies=[Depends(ai_rate_limit)])
+def chat_endpoint(body: ChatIn, db: Session = Depends(get_db), cid: str = Depends(client_id)):
     if body.messages[-1].role != "user":
         raise HTTPException(422, "The last message must be from the user.")
     try:
-        return chat(db, [m.model_dump() for m in body.messages])
+        return chat(db, cid, [m.model_dump() for m in body.messages])
     except Exception as e:  # quota / network errors from Gemini
         raise HTTPException(502, f"The AI service failed: {e}")

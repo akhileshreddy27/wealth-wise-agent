@@ -23,6 +23,11 @@ class Settings(BaseSettings):
     risk_free_rate: float = 0.065  # roughly India's 91-day T-bill yield, used in Sharpe / Sortino
     cors_origins: str = "http://localhost:5173"
 
+    # Public-demo protection: AI calls (chat, explain, AI categorising) per hour per IP (0 = no limit),
+    # and how often anyone may re-download market data.
+    ai_requests_per_hour: int = 30
+    market_refresh_min_minutes: int = 60
+
     @property
     def ai_enabled(self) -> bool:
         return bool(self.gemini_api_key.strip())

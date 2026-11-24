@@ -58,7 +58,8 @@ export default function PlanPage() {
     setRefreshing(true)
     setRefreshError(null)
     try {
-      await api.post('/market/refresh')
+      const r = await api.post<{ skipped?: string }>('/market/refresh')
+      if (r.skipped) setRefreshError(`Already up to date: ${r.skipped}`)
       await plan.reload()
     } catch (e) {
       setRefreshError((e as Error).message)
@@ -71,7 +72,7 @@ export default function PlanPage() {
     <>
       <PageHeader
         title="Your investment plan"
-        subtitle={<>Built by Wealth Wise's scoring engine from live NSE and AMFI data · updated {ago(p.market_updated_at)}{refreshError && <span className="text-rose-600"> · {refreshError}</span>}</>}
+        subtitle={<>Built by Wealth Wise's scoring engine from live NSE and AMFI data · updated {ago(p.market_updated_at)}{refreshError && <span className="text-amber-700"> · {refreshError}</span>}</>}
         actions={<Button variant="secondary" busy={refreshing} onClick={refresh}>{refreshing ? 'Refreshing market data…' : 'Refresh market data'}</Button>}
       />
 

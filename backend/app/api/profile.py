@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from app import services
+from app.api.deps import client_id
 from app.db import Profile, get_db
 from app.engine.risk import QUESTIONNAIRE, compute_risk
 
@@ -28,19 +29,19 @@ def questionnaire():
 
 
 @router.get("")
-def read_profile(db: Session = Depends(get_db)):
-    p = services.get_profile(db)
+def read_profile(db: Session = Depends(get_db), cid: str = Depends(client_id)):
+    p = services.get_profile(db, cid)
     return services.profile_dict(p) if p else None
 
 
 @router.put("")
-def save_profile(body: ProfileIn, db: Session = Depends(get_db)):
+def save_profile(body: ProfileIn, db: Session = Depends(get_db), cid: str = Depends(client_id)):
     try:
         score, category = compute_risk(body.answers, body.age, body.horizon_years, body.dependents,
                                        body.monthly_expenses, body.current_savings)
     except ValueError as e:
         raise HTTPException(422, str(e))
-    p = services.get_profile(db) or Profile(id=1)
+    p = services.get_profile(db, cid) or Profile(client_id=cid)
     for key, value in body.model_dump().items():
         setattr(p, key, value)
     p.risk_score, p.risk_category, p.updated_at = score, category, datetime.now(timezone.utc)
