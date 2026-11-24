@@ -6,11 +6,8 @@ __pycache__/
 
 # Secrets
 .env
+.streamlit/secrets.toml
 
 # Local data (market.json and sample_statement.csv ARE committed)
-backend/data/wealthwise.db
-backend/data/embeddings.json
-
-# Node
-node_modules/
-frontend/dist/
+data/wealthwise.db
+data/embeddings.json

@@ -1,9 +1,0 @@
-.git
-**/.env
-**/__pycache__
-**/.pytest_cache
-backend/.venv
-backend/data/wealthwise.db
-backend/data/embeddings.json
-frontend/node_modules
-frontend/dist

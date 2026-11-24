@@ -8,33 +8,31 @@ A personal finance app for Indian investors that does three things:
 
 > Educational project. Not SEBI-registered investment advice.
 
-**Stack:** FastAPI · SQLite (SQLAlchemy) · Google Gemini (`google-genai`) · pandas / NumPy · yfinance + mfapi.in · React 19 + TypeScript + Vite + Tailwind CSS + Recharts
+**Stack (all Python):** Streamlit · Google Gemini (`google-genai`) · pandas / NumPy · SQLite (SQLAlchemy) · Altair · yfinance + mfapi.in
 
 ---
 
 ## How it works
 
 ```
-                    ┌──────────────── React frontend ─────────────────┐
-                    │ Dashboard · Plan · Expenses · Learn · Assistant │
-                    └────────────────────────┬────────────────────────┘
-                                             │ /api
-┌────────────────────────────────── FastAPI backend ───────────────────────────────────┐
-│                                                                                      │
-│  engine/  (deterministic, no AI)        ai/  (Gemini agents)        rag/             │
-│  risk ──► allocation ──► plan           assistant: tool-calling ──► knowledge base   │
-│  stocks (factor scoring)   ▲            loop with 7 tools            BM25 + Gemini   │
-│  funds  (peer ranking)     │            explainer: plan → words      embeddings, RRF │
-│  fds    (best FD)          │            categoriser: unknown txns        ▲           │
-│                            │                 │                           │           │
-│  market/  snapshot (data/market.json) + live quotes      content/*.md (13 lessons)   │
-│  expenses/  analytics · CSV import · categories          SQLite: profile, txns, budgets │
-└──────────────────────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────── Streamlit app (app_pages/) ─────────────────────────────┐
+│        Dashboard · My Plan · Profile · Expenses · Assistant · Lessons               │
+└───────────────────────────────────────┬─────────────────────────────────────────────┘
+                                        │ plain Python calls
+┌──────────────────────────────── wealthwise/ package ────────────────────────────────┐
+│  engine/  (deterministic, no AI)      ai/  (Gemini agents)          rag/            │
+│  risk ──► allocation ──► plan         assistant: tool-calling ──►  knowledge base   │
+│  stocks (factor scoring)  ▲           loop with 7 tools             BM25 + Gemini   │
+│  funds  (peer ranking)    │           explainer: plan → words       embeddings, RRF │
+│  fds    (best FD)         │           categoriser: unknown txns         ▲           │
+│  market/  snapshot (data/market.json) + live quotes     content/*.md (13 lessons)   │
+│  expenses/  analytics · CSV import     services.py ── SQLite: profile, txns, budgets│
+└─────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 **Rule: the AI never invents numbers.** Every figure comes from the deterministic engine or a tool call. Gemini explains, searches and orchestrates. Every AI feature also has a non-AI fallback, so the app works without an API key.
 
-### 1. Recommendation engine (`backend/app/engine/`)
+### 1. Recommendation engine (`wealthwise/engine/`)
 
 | Step | File | What it does |
 |---|---|---|
@@ -47,15 +45,15 @@ A personal finance app for Indian investors that does three things:
 | FD pick | `fds.py` | Best rate for a tenure matched to your horizon (1–5 years), senior rates at 60+. If the top rate is from a small finance bank, the best large-bank option is shown too, with the DICGC ₹5 lakh insurance limit. |
 | Metrics | `metrics.py` | CAGR, annualised volatility, Sharpe, Sortino, max drawdown, beta vs NIFTY 50 and rolling-return consistency, computed from 5 years of daily prices / NAVs. |
 
-### 2. AI agents and RAG (`backend/app/ai/`, `backend/app/rag/`)
+### 2. AI agents and RAG (`wealthwise/ai/`, `wealthwise/rag/`)
 
-- **Assistant** (`assistant.py`): a Gemini tool-calling agent. The loop is written out by hand, not left to the SDK's automatic function calling, so the UI can show which tools ran and cite sources. Tools:
+- **Assistant** (`assistant.py`): a Gemini tool-calling agent. The loop is written out by hand, not left to the SDK's automatic function calling, so the app can show which tools ran and cite sources. Tools:
   `search_knowledge` (RAG over lessons) · `get_stock_quote` (live NSE price) · `get_fund_nav` (live AMFI NAV) · `get_stock_score` · `plan_goal` (SIP for a goal, inflation-adjusted) · `get_my_plan` · `get_my_spending`.
 - **Knowledge base** (`knowledge.py`): lessons are split at their `##` headings into chunks. Search is hybrid: **BM25** keyword ranking plus **Gemini embeddings** (`gemini-embedding-001`, cached on disk and rebuilt when lessons change), merged with **reciprocal rank fusion**. Without a key it falls back to BM25 only.
 - **Plan explainer** (`explainer.py`): turns the engine's plan JSON into a short personal explanation. Without a key, a rule-based version stitches together the same facts.
 - **Categoriser** (`categorizer.py`): imported transactions the keyword rules can't place go to Gemini in one batch, with a JSON schema whose category is an `enum`, so it can only answer with real categories.
 
-### 3. Expense tracker (`backend/app/expenses/`)
+### 3. Expense tracker (`wealthwise/expenses/`)
 
 Monthly summary with budgets and the **50/30/20** split (SIPs count as saving, not spending). It also detects **recurring payments** (same merchant, ±15% amount, 2 of the last 3 months) and **spending spikes** (above mean + 2σ of the previous months), and shows the 10-year SIP value of cutting your biggest discretionary category. CSV import handles signed-amount and debit/credit statements, auto-categorises rows and skips duplicates.
 
@@ -63,116 +61,79 @@ Monthly summary with budgets and the **50/30/20** split (SIPs count as saving, n
 
 ## Run it locally (Windows)
 
-Needs Python 3.12+ and Node 20+.
-
-**1. Backend** (http://localhost:8000, API docs at http://localhost:8000/docs)
+Needs Python 3.12+.
 
 ```powershell
-cd backend
 python -m venv .venv
 .\.venv\Scripts\pip install -r requirements.txt
 copy .env.example .env        # then paste your Gemini key into .env (optional)
-.\.venv\Scripts\uvicorn app.main:app --reload
+.\.venv\Scripts\streamlit run streamlit_app.py
 ```
 
-**2. Frontend** (http://localhost:5173), in a second terminal
-
-```powershell
-cd frontend
-npm install
-npm run dev
-```
-
-**3. Use it.** Fill in your profile → see your plan → on Expenses click **Load demo statement** → try the Assistant.
+The app opens at http://localhost:8501. Fill in your profile → see your plan → on Expenses click **Load demo statement** → try the Assistant.
 
 ### Gemini API key (free)
 
-Get one at https://aistudio.google.com/apikey and put it in `backend/.env`:
+Get one at https://aistudio.google.com/apikey and put it in `.env`:
 
 ```
 GEMINI_API_KEY=your-key-here
 ```
 
-Restart the backend. The sidebar shows "Gemini AI on" and lesson search becomes "hybrid". Change the model with `GEMINI_MODEL` (default `gemini-3.6-flash`). If Google reports the model as busy or slow, the app retries on `GEMINI_FALLBACK_MODELS` (default `gemini-3.5-flash-lite`).
+Restart the app. The sidebar shows "Gemini AI on" and lesson search becomes "hybrid". Change the model with `GEMINI_MODEL` (default `gemini-3.6-flash`). If Google reports the model as busy or slow, the app retries on `GEMINI_FALLBACK_MODELS` (default `gemini-3.5-flash-lite`).
 
 ### Market data
 
-`backend/data/market.json` holds a snapshot of 50 stocks and 24 funds. Refresh it with the **Refresh market data** button on the Plan page, or:
+`data/market.json` holds a snapshot of 50 stocks and 24 funds. Refresh it with the **Refresh market data** button on the My Plan page, or:
 
 ```powershell
-cd backend
-.\.venv\Scripts\python -m app.market.data
+.\.venv\Scripts\python -m wealthwise.market.data
 ```
 
-FD rates live in `backend/app/market/fd_rates.json` and must be updated by hand from bank websites (the app labels them as indicative).
+FD rates live in `wealthwise/market/fd_rates.json` and must be updated by hand from bank websites (the app labels them as indicative).
 
-### Deploy (free, on Render)
+### Deploy (free, on Streamlit Community Cloud)
 
-The repo deploys as **one web service**: the `Dockerfile` builds the React app and the FastAPI backend serves it.
+1. Sign in at https://share.streamlit.io with GitHub.
+2. **Create app → Deploy a public app from GitHub**: pick this repository, branch `main`, main file `streamlit_app.py`.
+3. Under **Advanced settings**, choose Python 3.12 and paste into **Secrets**: `GEMINI_API_KEY = "your-key-here"`
+4. Click **Deploy**. The first build takes a few minutes.
 
-1. Sign in at https://render.com with GitHub.
-2. **New → Blueprint**, then pick this repository (Render reads `render.yaml`).
-3. Paste your Gemini key when Render asks for `GEMINI_API_KEY`, then click **Apply**.
-4. The first build takes about 5 minutes. Your site is at `https://wealth-wise-<something>.onrender.com`.
+The free app sleeps after a while without visitors (the first visit then wakes it), and its disk is temporary, so visitors' data resets when it restarts. That's fine for a demo.
 
-Notes on the free plan: the service sleeps after 15 minutes without visitors, so the first visit afterwards takes about a minute; and its disk is temporary, so visitors' data resets when the service restarts. That's fine for a demo.
-
-**Public-demo safety:** there is no login, so each browser gets a random visitor id (`X-Client-Id` header) and only ever sees its own profile, transactions and budgets. AI endpoints are rate-limited per IP (`AI_REQUESTS_PER_HOUR`, default 30) to protect the Gemini quota, and market data can be re-downloaded at most once an hour.
+**Public-demo safety:** there is no login. Each visitor gets a random id kept in the page URL (`?u=...`), and only ever sees their own profile, transactions, budgets and quiz scores. AI calls are rate-limited per visitor (`AI_REQUESTS_PER_HOUR`, default 20) and for the whole app (`AI_REQUESTS_PER_HOUR_TOTAL`, default 300) to protect the Gemini quota, and market data can be re-downloaded at most once an hour.
 
 ### Tests
 
 ```powershell
-cd backend
 .\.venv\Scripts\pytest -q
 ```
 
-38 tests run offline: the engine, expense analytics, CSV import, RAG search, the API (including visitor isolation and rate limits), and the agent loop with a scripted fake Gemini.
+40 tests run offline: the engine, expense analytics, CSV import, RAG search, the agent loop with a scripted fake Gemini, visitor isolation and rate limits, and every Streamlit page run headless with Streamlit's `AppTest`.
 
 ---
 
 ## Project layout
 
 ```
-backend/
-  app/
-    main.py            FastAPI app, /api/health, serves the built frontend in production
-    config.py, db.py   settings (.env) and SQLite models: Profile, Transaction, Budget (all per visitor)
-    ratelimit.py       in-memory rate limiter for the AI endpoints
-    services.py        shared reads used by routes and agent tools
-    api/               deps.py (visitor id, rate limit) · profile.py · plan.py (plan, explain, market) · expenses.py · learn.py (lessons, chat)
-    engine/            risk · allocation · stocks · funds · fds · ranking · metrics · plan
-    market/            universe.py (what's tracked) · data.py (snapshot + live quotes) · fd_rates.json
-    expenses/          categories · analytics · importer
-    ai/                gemini.py (SDK wrapper) · assistant · explainer · categorizer
-    rag/               knowledge.py · content/ (13 lessons + modules.json: quizzes, verified videos)
-  data/                market.json · sample_statement.csv (SQLite DB and embeddings cache are created here)
-  tests/
-frontend/src/
-  pages/               Dashboard · Profile · Plan · Expenses · Learn · LearnModule · Assistant
-  components/          Layout · ui (cards, buttons, badges…)
-  lib/                 api.ts (client, types, ₹ formatting) · useApi · progress (quiz scores)
+streamlit_app.py       entry point: page setup and navigation
+app_pages/             dashboard · profile · plan · expenses · learn · assistant
+                       common.py (visitor id, rate limits, formatting) · charts.py (Altair)
+wealthwise/
+  config.py, db.py     settings (.env / Streamlit secrets) and SQLite models, all per visitor
+  services.py          reads and writes shared by the pages and the agent's tools
+  ratelimit.py         in-memory rate limiter for AI calls
+  engine/              risk · allocation · stocks · funds · fds · ranking · metrics · plan
+  market/              universe.py (what's tracked) · data.py (snapshot + live quotes) · fd_rates.json
+  expenses/            categories · analytics · importer
+  ai/                  gemini.py (SDK wrapper) · assistant · explainer · categorizer
+  rag/                 knowledge.py · content/ (13 lessons + modules.json: quizzes, verified videos)
+data/                  market.json · sample_statement.csv (the SQLite DB and embeddings cache are created here)
+tests/
 ```
-
-## API
-
-| Method | Path | |
-|---|---|---|
-| GET | `/api/health` | AI on/off, search mode, data freshness |
-| GET / PUT | `/api/profile` | profile (PUT computes the risk score) |
-| GET | `/api/profile/questionnaire` | risk questions |
-| GET | `/api/plan` | full personalised plan |
-| POST | `/api/plan/explain` | AI (or rule-based) explanation |
-| GET / POST | `/api/market/status`, `/api/market/refresh` | snapshot info / re-download |
-| GET / POST | `/api/transactions` | list (`?month=YYYY-MM`) / add (category auto-detected) |
-| PUT / DELETE | `/api/transactions/{id}` | edit / delete |
-| POST | `/api/transactions/import`, `/api/transactions/demo` | CSV upload / sample statement |
-| GET / PUT | `/api/budgets` | monthly limit per category |
-| GET | `/api/expenses/summary?month=` | summary, 50/30/20, trend, insights |
-| GET | `/api/learn/modules`, `/api/learn/modules/{id}` | lessons, videos, quizzes |
-| POST | `/api/chat` | assistant (`{messages: [{role, content}]}`) |
 
 ## Limitations
 
-- No accounts: data is tied to a random id in your browser, so clearing site data (or another browser) starts fresh.
+- No accounts: your data is tied to the `?u=...` id in your link, so anyone you share the full link with sees your data, and a new link starts fresh.
 - Stock fundamentals come from Yahoo Finance and can be missing or delayed. FD rates are a hand-maintained table.
 - Expected returns (equity 12%, debt 7%) are long-run assumptions, not forecasts.
