@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# Secrets
+.env
+
+# Local data (market.json and sample_statement.csv ARE committed)
+backend/data/wealthwise.db
+backend/data/embeddings.json
+
+# Node
+node_modules/
+frontend/dist/

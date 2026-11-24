@@ -1,0 +1,599 @@
+{
+ "_note": "Learning modules. Each `file` is markdown whose '## ' sections are also the chatbot's knowledge chunks. `videos` are YouTube videos verified via oEmbed ({id, title, channel}); `video_query` is a fallback search link.",
+ "modules": [
+  {
+   "id": "budgeting",
+   "file": "budgeting.md",
+   "level": "Beginner",
+   "minutes": 4,
+   "summary": "Split income into needs, wants and savings, and see why SIPs count as saving.",
+   "video_query": "50 30 20 rule budgeting explained India",
+   "videos": [
+    {
+     "id": "C49nSjzg1iw",
+     "title": "50-30-20 Rule of Money | Easy Financial Planning for Beginners",
+     "channel": "Asset Yogi"
+    }
+   ],
+   "sources": [
+    {
+     "title": "SEBI investor education: Saa₹thi",
+     "url": "https://investor.sebi.gov.in/"
+    }
+   ],
+   "quiz": [
+    {
+     "q": "Under the 50/30/20 rule, which bucket does a monthly SIP belong to?",
+     "options": [
+      "Needs",
+      "Wants",
+      "Savings"
+     ],
+     "answer": 2,
+     "why": "A SIP moves money into an investment you still own, so it is saving, not spending."
+    },
+    {
+     "q": "What is usually the easiest way to cut spending?",
+     "options": [
+      "Trim every category a little",
+      "Cut the single biggest discretionary category",
+      "Stop all investments"
+     ],
+     "answer": 1,
+     "why": "One large change sticks better than many small ones."
+    }
+   ]
+  },
+  {
+   "id": "emergency-fund",
+   "file": "emergency-fund.md",
+   "level": "Beginner",
+   "minutes": 4,
+   "summary": "How much to keep aside for emergencies, and where to keep it.",
+   "video_query": "emergency fund explained how much where to keep India",
+   "videos": [
+    {
+     "id": "vO2KGm8NM8E",
+     "title": "What is an Emergency Fund? | How to build it? | Personal Finance for Beginners Ep - 1",
+     "channel": "Zerodha Varsity"
+    },
+    {
+     "id": "vaxRsYGdIus",
+     "title": "How much Emergency Fund do you need? | Is 6x of your expenses Enough? | Basic Finance - Class 3",
+     "channel": "Zerodha Varsity"
+    }
+   ],
+   "sources": [
+    {
+     "title": "RBI financial education",
+     "url": "https://www.rbi.org.in/FinancialEducation/"
+    }
+   ],
+   "quiz": [
+    {
+     "q": "How many months of essential expenses is the usual emergency-fund guideline?",
+     "options": [
+      "1",
+      "6",
+      "24"
+     ],
+     "answer": 1,
+     "why": "Six months covers most job searches or medical events; more if your income is irregular."
+    },
+    {
+     "q": "Which is the worst place for an emergency fund?",
+     "options": [
+      "Liquid fund",
+      "Sweep-in FD",
+      "Small-cap equity fund"
+     ],
+     "answer": 2,
+     "why": "Equity can be down exactly when you need the cash."
+    }
+   ]
+  },
+  {
+   "id": "compounding-inflation",
+   "file": "compounding-inflation.md",
+   "level": "Beginner",
+   "minutes": 4,
+   "summary": "Why starting early matters, and how inflation quietly shrinks your money.",
+   "video_query": "power of compounding and inflation explained India",
+   "videos": [
+    {
+     "id": "cosjtcWyWlI",
+     "title": "How does compounding work | Ankur Warikoo Hindi Video | Power of compounding",
+     "channel": "warikoo"
+    },
+    {
+     "id": "oImxcKc0qak",
+     "title": "The Truth behind Inflation | Explained by Dhruv Rathee",
+     "channel": "Dhruv Rathee"
+    }
+   ],
+   "sources": [
+    {
+     "title": "RBI: inflation targeting",
+     "url": "https://www.rbi.org.in/"
+    }
+   ],
+   "quiz": [
+    {
+     "q": "By the Rule of 72, money growing at 12% a year doubles in about…",
+     "options": [
+      "3 years",
+      "6 years",
+      "12 years"
+     ],
+     "answer": 1,
+     "why": "72 ÷ 12 = 6."
+    },
+    {
+     "q": "An FD pays 7% and inflation is 6%. The real return before tax is about…",
+     "options": [
+      "1%",
+      "7%",
+      "13%"
+     ],
+     "answer": 0,
+     "why": "Real return ≈ nominal return − inflation."
+    }
+   ]
+  },
+  {
+   "id": "sip",
+   "file": "sip.md",
+   "level": "Beginner",
+   "minutes": 4,
+   "summary": "How SIPs work, rupee cost averaging, and the maths behind SIP growth.",
+   "video_query": "what is SIP systematic investment plan explained",
+   "videos": [
+    {
+     "id": "pHJpTZcmeFU",
+     "title": "What Is SIP (Systematic Investment Plan)? | How Can It Benefit You? | DSP Mutual Fund",
+     "channel": "DSP Mutual Fund"
+    },
+    {
+     "id": "1DRq8N7SpYc",
+     "title": "SIP KYA HAI? SIP vs LUMPSUM EXPLAINED! | Ankur Warikoo Hindi",
+     "channel": "warikoo"
+    }
+   ],
+   "sources": [
+    {
+     "title": "AMFI: Mutual Funds Sahi Hai",
+     "url": "https://www.mutualfundssahihai.com/"
+    }
+   ],
+   "quiz": [
+    {
+     "q": "With a fixed monthly SIP, when the NAV falls you buy…",
+     "options": [
+      "fewer units",
+      "more units",
+      "the same units"
+     ],
+     "answer": 1,
+     "why": "The same rupee amount buys more units at a lower price: rupee cost averaging."
+    },
+    {
+     "q": "Can you stop a SIP any time?",
+     "options": [
+      "Yes",
+      "No, it runs for the full term",
+      "Only after 3 years"
+     ],
+     "answer": 0,
+     "why": "A SIP is just a payment instruction. (ELSS units are locked in, but the SIP itself can stop.)"
+    }
+   ]
+  },
+  {
+   "id": "mutual-funds",
+   "file": "mutual-funds.md",
+   "level": "Beginner",
+   "minutes": 5,
+   "summary": "NAV, direct vs regular plans, growth vs IDCW, and fund categories.",
+   "video_query": "what is mutual fund explained NAV direct vs regular plan",
+   "videos": [
+    {
+     "id": "5uaWzV55v0Y",
+     "title": "Direct vs Regular Mutual Funds | Must Watch to Save Lakhs | Sanjay Kathuria",
+     "channel": "Sanjay Kathuria "
+    },
+    {
+     "id": "y_RAuDKPrm4",
+     "title": "How to switch from Regular Plan to Direct Plan | CA Rachana Ranade",
+     "channel": "CA Rachana Phadke Ranade"
+    }
+   ],
+   "sources": [
+    {
+     "title": "AMFI",
+     "url": "https://www.amfiindia.com/"
+    },
+    {
+     "title": "SEBI investor website",
+     "url": "https://investor.sebi.gov.in/"
+    }
+   ],
+   "quiz": [
+    {
+     "q": "What is the only difference between a fund's direct and regular plans?",
+     "options": [
+      "The stocks they hold",
+      "The cost (distributor commission)",
+      "The fund manager"
+     ],
+     "answer": 1,
+     "why": "Same portfolio; the regular plan pays a commission through a higher expense ratio."
+    },
+    {
+     "q": "Which option suits long-term compounding?",
+     "options": [
+      "Growth",
+      "IDCW"
+     ],
+     "answer": 0,
+     "why": "Growth keeps profits invested; IDCW pays out your own money and it's taxed at your slab."
+    }
+   ]
+  },
+  {
+   "id": "index-funds",
+   "file": "index-funds.md",
+   "level": "Beginner",
+   "minutes": 4,
+   "summary": "Passive investing: what index funds do and how to choose one.",
+   "video_query": "index fund explained Nifty 50 index fund",
+   "videos": [
+    {
+     "id": "v693MDRV1HI",
+     "title": "What are Index Mutual Funds? | Ankur Warikoo",
+     "channel": "warikoo"
+    },
+    {
+     "id": "tvVx63VTyXI",
+     "title": "Why You Should Avoid ETFs | ETFs vs Index Funds",
+     "channel": "Pranjal Kamra"
+    }
+   ],
+   "sources": [
+    {
+     "title": "NSE indices",
+     "url": "https://www.niftyindices.com/"
+    }
+   ],
+   "quiz": [
+    {
+     "q": "Two Nifty 50 index funds hold the same stocks. What should you compare?",
+     "options": [
+      "Past 1-year return only",
+      "Expense ratio and tracking error",
+      "Fund manager's reputation"
+     ],
+     "answer": 1,
+     "why": "The holdings are identical, so cost and how closely they track the index matter."
+    }
+   ]
+  },
+  {
+   "id": "fixed-deposits",
+   "file": "fixed-deposits.md",
+   "level": "Beginner",
+   "minutes": 5,
+   "summary": "How FDs earn interest, DICGC insurance, TDS and tax-saver FDs.",
+   "video_query": "fixed deposit explained DICGC insurance FD India",
+   "videos": [
+    {
+     "id": "tAcRXJk19sw",
+     "title": "Insurance on Fixed Deposits? | #Simplified by Deepak Korah",
+     "channel": "#Simplified by Deepak Korah"
+    }
+   ],
+   "sources": [
+    {
+     "title": "DICGC",
+     "url": "https://www.dicgc.org.in/"
+    },
+    {
+     "title": "Income Tax Department",
+     "url": "https://www.incometax.gov.in/"
+    }
+   ],
+   "quiz": [
+    {
+     "q": "DICGC insures deposits up to how much per depositor per bank?",
+     "options": [
+      "₹1 lakh",
+      "₹5 lakh",
+      "No limit"
+     ],
+     "answer": 1,
+     "why": "₹5 lakh, principal and interest combined."
+    },
+    {
+     "q": "Is interest on a cumulative FD taxed before maturity?",
+     "options": [
+      "Yes, every year as it accrues",
+      "No, only at maturity"
+     ],
+     "answer": 0,
+     "why": "FD interest is taxable each year at your slab rate, even if you receive it at maturity."
+    }
+   ]
+  },
+  {
+   "id": "asset-allocation",
+   "file": "asset-allocation.md",
+   "level": "Intermediate",
+   "minutes": 5,
+   "summary": "Choosing your equity / debt / cash mix, and how the app decides yours.",
+   "video_query": "asset allocation explained India mutual funds",
+   "videos": [
+    {
+     "id": "LTe0xl8LZuA",
+     "title": "What is Asset Allocation? Learn how to do asset allocation | Personal Finance for Beginners Ep - 6",
+     "channel": "Zerodha Varsity"
+    },
+    {
+     "id": "qqGKXf_YM4Q",
+     "title": "What is the Ideal Asset Allocation for your Mutual Fund Portfolio?",
+     "channel": "Mutual Funds with Groww"
+    }
+   ],
+   "sources": [
+    {
+     "title": "SEBI investor website",
+     "url": "https://investor.sebi.gov.in/"
+    }
+   ],
+   "quiz": [
+    {
+     "q": "Money you need within 2 years should mostly be in…",
+     "options": [
+      "Small-cap funds",
+      "Debt funds / FDs",
+      "Direct stocks"
+     ],
+     "answer": 1,
+     "why": "Equity can stay down for 2-3 years; short horizons need stability."
+    },
+    {
+     "q": "What does rebalancing do?",
+     "options": [
+      "Sells what lagged",
+      "Brings the mix back to target",
+      "Increases risk"
+     ],
+     "answer": 1,
+     "why": "Trim what grew, add to what lagged, so risk stays where you planned it."
+    }
+   ]
+  },
+  {
+   "id": "tax-saving",
+   "file": "tax-saving.md",
+   "level": "Intermediate",
+   "minutes": 5,
+   "summary": "Old vs new tax regime, Section 80C options and ELSS.",
+   "video_query": "ELSS 80C old vs new tax regime explained",
+   "videos": [
+    {
+     "id": "9yoEyT1zDq4",
+     "title": "New Income Tax Slabs 2025-26 Calculation & Rules | New Tax Regime vs Old Tax Regime",
+     "channel": "Asset Yogi"
+    },
+    {
+     "id": "W2qBVtV6Bw0",
+     "title": "Is ELSS Still Worth It Under the New Tax Regime? | #AskDhirendra",
+     "channel": "Value Research"
+    }
+   ],
+   "sources": [
+    {
+     "title": "Income Tax Department: tax calculator",
+     "url": "https://www.incometax.gov.in/"
+    }
+   ],
+   "quiz": [
+    {
+     "q": "Which 80C option has the shortest lock-in?",
+     "options": [
+      "PPF",
+      "Tax-saver FD",
+      "ELSS"
+     ],
+     "answer": 2,
+     "why": "ELSS has a 3-year lock-in; tax-saver FDs 5 years; PPF 15 years."
+    },
+    {
+     "q": "Can you claim 80C under the new tax regime?",
+     "options": [
+      "Yes",
+      "No"
+     ],
+     "answer": 1,
+     "why": "The new regime trades most deductions for lower rates."
+    }
+   ]
+  },
+  {
+   "id": "capital-gains",
+   "file": "capital-gains.md",
+   "level": "Intermediate",
+   "minutes": 5,
+   "summary": "How equity funds, debt funds and FDs are taxed when you earn or sell.",
+   "video_query": "capital gains tax mutual funds LTCG STCG explained",
+   "videos": [
+    {
+     "id": "nfX-esge_3o",
+     "title": "TAX on stock market & mutual funds | STCG, LTCG, and DIVIDENDS @CARachanaRanade​",
+     "channel": "Labour Law Advisor"
+    },
+    {
+     "id": "faGIkslCtDM",
+     "title": "How To Calculate Long-term Capital Gain Tax On Mutual Funds - LTCG and STCG Kya Hota Hai",
+     "channel": "Bajaj Finserv Mutual Fund"
+    }
+   ],
+   "sources": [
+    {
+     "title": "Income Tax Department",
+     "url": "https://www.incometax.gov.in/"
+    }
+   ],
+   "quiz": [
+    {
+     "q": "Equity fund units held for more than 12 months: gains above ₹1.25 lakh a year are taxed at…",
+     "options": [
+      "12.5%",
+      "20%",
+      "your slab rate"
+     ],
+     "answer": 0,
+     "why": "Long-term equity gains: 12.5% above the yearly ₹1.25 lakh exemption."
+    },
+    {
+     "q": "A debt fund bought in 2025 and sold after 4 years is taxed at…",
+     "options": [
+      "12.5%",
+      "20%",
+      "your slab rate"
+     ],
+     "answer": 2,
+     "why": "Debt funds bought from April 2023 are taxed at slab rate regardless of holding period."
+    }
+   ]
+  },
+  {
+   "id": "stock-metrics",
+   "file": "stock-metrics.md",
+   "level": "Intermediate",
+   "minutes": 6,
+   "summary": "P/E, ROE, debt, momentum and beta, and how the app scores NIFTY 50 stocks.",
+   "video_query": "PE ratio ROE explained how to analyse a stock India",
+   "videos": [
+    {
+     "id": "XnbDrznqn7s",
+     "title": "What is PE Ratio? PE Ratio explained in Hindi",
+     "channel": "Yadnya Investment Academy"
+    },
+    {
+     "id": "Q2pybrP99vg",
+     "title": "What is Return on Equity? ROE Kya Hota Hai? ROE Explained in Hindi",
+     "channel": "Yadnya Investment Academy"
+    }
+   ],
+   "sources": [
+    {
+     "title": "NSE India",
+     "url": "https://www.nseindia.com/"
+    }
+   ],
+   "quiz": [
+    {
+     "q": "A stock with beta 0.7 tends to…",
+     "options": [
+      "move less than the market",
+      "move more than the market",
+      "move opposite to the market"
+     ],
+     "answer": 0,
+     "why": "Beta below 1 means smaller swings than the index."
+    },
+    {
+     "q": "A negative P/E means the company is…",
+     "options": [
+      "very cheap",
+      "making losses",
+      "paying high dividends"
+     ],
+     "answer": 1,
+     "why": "P/E divides price by earnings; negative earnings make it negative."
+    }
+   ]
+  },
+  {
+   "id": "risk-metrics",
+   "file": "risk-metrics.md",
+   "level": "Advanced",
+   "minutes": 6,
+   "summary": "CAGR, volatility, Sharpe, Sortino, drawdown and rolling returns.",
+   "video_query": "sharpe ratio standard deviation mutual fund explained",
+   "videos": [
+    {
+     "id": "eU45evtcc90",
+     "title": "How to Measure Mutual Fund Risk | Alpha, Beta, SD, Sharpe, R-squared, Sortino | Learn with ETMONEY",
+     "channel": "ET Money"
+    },
+    {
+     "id": "1ADC3zaR8zY",
+     "title": "What does Sharpe Ratio tell about a Mutual Fund?",
+     "channel": "Yadnya Investment Academy"
+    }
+   ],
+   "sources": [
+    {
+     "title": "AMFI",
+     "url": "https://www.amfiindia.com/"
+    }
+   ],
+   "quiz": [
+    {
+     "q": "The Sharpe ratio measures…",
+     "options": [
+      "total return",
+      "return above the risk-free rate per unit of volatility",
+      "fund size"
+     ],
+     "answer": 1,
+     "why": "(Return − risk-free rate) ÷ volatility."
+    },
+    {
+     "q": "Maximum drawdown is…",
+     "options": [
+      "the largest peak-to-trough fall",
+      "the worst single day",
+      "the expense ratio"
+     ],
+     "answer": 0,
+     "why": "It shows the deepest loss from a high an investor would have sat through."
+    }
+   ]
+  },
+  {
+   "id": "goal-planning",
+   "file": "goal-planning.md",
+   "level": "Intermediate",
+   "minutes": 4,
+   "summary": "Pricing a goal, adjusting for inflation and finding the SIP it needs.",
+   "video_query": "goal based investing SIP planning explained India",
+   "videos": [
+    {
+     "id": "JvAAr11mKTI",
+     "title": "How I Use Goal-Based Investing to Build the Life I Want",
+     "channel": "Shankar Nath"
+    }
+   ],
+   "sources": [
+    {
+     "title": "AMFI: Mutual Funds Sahi Hai",
+     "url": "https://www.mutualfundssahihai.com/"
+    }
+   ],
+   "quiz": [
+    {
+     "q": "Your SIP for a 3-year goal is too high. Which lever should you NOT pull?",
+     "options": [
+      "Invest for longer",
+      "Step up the SIP yearly",
+      "Move it all into small-cap funds"
+     ],
+     "answer": 2,
+     "why": "Taking more risk on a short goal can leave you short exactly when you need the money."
+    }
+   ]
+  }
+ ]
+}

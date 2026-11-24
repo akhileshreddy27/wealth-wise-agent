@@ -1,0 +1,186 @@
+{
+ "_note": "INDICATIVE FD rates (% p.a.). Banks change rates often: check each bank's site and update `as_of` when you edit. Slabs are tenure ranges in days.",
+ "as_of": "2025-10-01",
+ "slabs": [
+  [
+   7,
+   45
+  ],
+  [
+   46,
+   179
+  ],
+  [
+   180,
+   364
+  ],
+  [
+   365,
+   729
+  ],
+  [
+   730,
+   1094
+  ],
+  [
+   1095,
+   1824
+  ],
+  [
+   1825,
+   3650
+  ]
+ ],
+ "banks": [
+  {
+   "bank": "State Bank of India",
+   "type": "public",
+   "url": "https://sbi.co.in",
+   "rates": [
+    3.05,
+    5.05,
+    5.8,
+    6.25,
+    6.45,
+    6.3,
+    6.05
+   ],
+   "senior_bonus": 0.5
+  },
+  {
+   "bank": "Bank of Baroda",
+   "type": "public",
+   "url": "https://www.bankofbaroda.in",
+   "rates": [
+    3.5,
+    5.25,
+    5.9,
+    6.25,
+    6.5,
+    6.25,
+    6.1
+   ],
+   "senior_bonus": 0.5
+  },
+  {
+   "bank": "Punjab National Bank",
+   "type": "public",
+   "url": "https://www.pnbindia.in",
+   "rates": [
+    3.5,
+    5.0,
+    5.9,
+    6.25,
+    6.4,
+    6.3,
+    6.1
+   ],
+   "senior_bonus": 0.5
+  },
+  {
+   "bank": "HDFC Bank",
+   "type": "private",
+   "url": "https://www.hdfcbank.com",
+   "rates": [
+    3.0,
+    4.75,
+    5.75,
+    6.25,
+    6.45,
+    6.45,
+    6.15
+   ],
+   "senior_bonus": 0.5
+  },
+  {
+   "bank": "ICICI Bank",
+   "type": "private",
+   "url": "https://www.icicibank.com",
+   "rates": [
+    3.0,
+    4.75,
+    5.75,
+    6.25,
+    6.45,
+    6.6,
+    6.4
+   ],
+   "senior_bonus": 0.5
+  },
+  {
+   "bank": "Axis Bank",
+   "type": "private",
+   "url": "https://www.axisbank.com",
+   "rates": [
+    3.0,
+    4.75,
+    5.75,
+    6.25,
+    6.45,
+    6.45,
+    6.4
+   ],
+   "senior_bonus": 0.5
+  },
+  {
+   "bank": "Kotak Mahindra Bank",
+   "type": "private",
+   "url": "https://www.kotak.com",
+   "rates": [
+    2.75,
+    5.0,
+    6.0,
+    6.25,
+    6.4,
+    6.25,
+    6.25
+   ],
+   "senior_bonus": 0.5
+  },
+  {
+   "bank": "AU Small Finance Bank",
+   "type": "small_finance",
+   "url": "https://www.aubank.in",
+   "rates": [
+    3.5,
+    5.5,
+    6.5,
+    6.75,
+    7.0,
+    7.25,
+    7.0
+   ],
+   "senior_bonus": 0.5
+  },
+  {
+   "bank": "Post Office Time Deposit",
+   "type": "government",
+   "url": "https://www.indiapost.gov.in",
+   "slabs": [
+    [
+     365,
+     729
+    ],
+    [
+     730,
+     1094
+    ],
+    [
+     1095,
+     1824
+    ],
+    [
+     1825,
+     1825
+    ]
+   ],
+   "rates": [
+    6.9,
+    7.0,
+    7.1,
+    7.5
+   ],
+   "senior_bonus": 0.0
+  }
+ ]
+}
